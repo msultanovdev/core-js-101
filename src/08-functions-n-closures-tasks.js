@@ -95,8 +95,9 @@ function getPolynom(...args) {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const res = func();
+  return () => res;
 }
 
 
@@ -115,8 +116,20 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  let att = attempts;
+  const retnFunc = () => {
+    while (att !== 0) {
+      try {
+        att -= 1;
+        return func();
+      } catch (err) {
+        return retnFunc();
+      }
+    }
+    return func();
+  };
+  return retnFunc;
 }
 
 
@@ -143,8 +156,20 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return (...args) => {
+    let result;
+    if (args.length > 1) {
+      logFunc(`${func.name}(${JSON.stringify(args).slice(1, -1)}) starts`);
+      result = func(...args);
+      logFunc(`${func.name}(${JSON.stringify(args).slice(1, -1)}) ends`);
+    } else {
+      logFunc(`${func.name}(${args}) starts`);
+      result = func(...args);
+      logFunc(`${func.name}(${args}) ends`);
+    }
+    return result;
+  };
 }
 
 
@@ -161,8 +186,8 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return (...args2) => fn(...args1, ...args2);
 }
 
 
@@ -183,8 +208,12 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let start = startFrom - 1;
+  return () => {
+    start += 1;
+    return start;
+  };
 }
 
 

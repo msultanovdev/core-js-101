@@ -288,8 +288,18 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const ccnArr = ccn.toString().split('');
+  const checkNum = +ccnArr.pop();
+  const res = ccnArr.reverse().map((num, i) => (i % 2 !== 0 ? +num : +num * 2))
+    .reduce((acc, cur) => {
+      if (cur < 10) {
+        return acc + cur;
+      }
+      return acc + cur.toString().split('').reduce((accum, item) => accum + (+item), 0);
+    }, 0);
+
+  return (10 - (res % 10)) % 10 === checkNum;
 }
 
 /**
@@ -335,8 +345,23 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const dictionary = {
+    ')': '(',
+    ']': '[',
+    '}': '{',
+    '>': '<',
+  };
+  const stack = [];
+  str.split('').forEach((item) => {
+    if (stack.length > 0
+        && stack[stack.length - 1] === dictionary[item]) {
+      stack.pop();
+    } else {
+      stack.push(item);
+    }
+  });
+  return stack.length === 0;
 }
 
 
@@ -377,8 +402,16 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let res = '';
+  if (pathes.every((el) => el.startsWith('/'))) res += '/';
+  const sample = pathes[0].split('/');
+  sample.forEach((el) => {
+    if (el !== '' && pathes.every((elt) => elt.split('/').includes(el))) {
+      res += `${el}/`;
+    }
+  });
+  return res;
 }
 
 
@@ -451,8 +484,21 @@ function getMatrixProduct(m1, m2) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const winner = [];
+  for (let i = 0; i < position.length; i += 1) {
+    if (position[i][0] && position[i][0] === position[i][1] && position[i][1] === position[i][2]) {
+      winner.push(position[i][0]);
+    }
+    if (position[0][i] && position[0][i] === position[1][i] && position[1][i] === position[2][i]) {
+      winner.push(position[0][i]);
+    }
+  }
+  if ((position[0][0] === position[1][1] && position[1][1] === position[2][2])
+    || (position[0][2] === position[1][1] && position[1][1] === position[2][0])) {
+    if (position[1][1]) winner.push(position[1][1]);
+  }
+  return winner[0];
 }
 
 
